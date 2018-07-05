@@ -29,7 +29,6 @@ export class GameScene extends TimesteppedScene {
 	}
 
 	create() {
-		console.log(`TEMP game`, this.game);
 		this.bullets = [];
 		this.enemies = [];
 		this.walls = [];
