@@ -4,9 +4,8 @@
  * The order matters since Phaser needs them available before it is imported.
  */
 
-import 'expose-loader?PIXI!phaser-ce/build/custom/pixi.js';
-import 'expose-loader?p2!phaser-ce/build/custom/p2.js';
-import 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js';
+import 'pixi';
+import 'p2';
 import { Game } from "./base/Game";
 
 // window.Phaser = Phaser;
