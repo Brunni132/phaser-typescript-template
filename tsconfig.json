@@ -2,8 +2,7 @@
   "compilerOptions": {
     /* The folders for type definitions */
     "typeRoots": [
-      "./lib/types",
-      "./node_modules/@types"
+      "./lib/types"
     ],
     "lib": [
       "dom",
