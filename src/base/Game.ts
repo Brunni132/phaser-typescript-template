@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser-ce';
 import { Boot } from "./Boot";
 import { Preloader } from "./Preloader";
 import { GameScene } from "../GameScene";
