@@ -7,6 +7,7 @@ import Boot from "./base/Boot";
 import TitleScene from "./TitleScene";
 import GameScene from "./GameScene";
 
+// We chose this resolution for a 16:9 ratio according to the art I drew
 const game = new Phaser.Game(796, 448, Phaser.AUTO, 'content', null);
 game.state.add('Boot', Boot, false);
 game.state.add('TitleScene', TitleScene, false);

@@ -32,7 +32,7 @@ export default class TitleScene extends TimesteppedScene {
 		if (this.game.input.keyboard.isDown(Phaser.Keyboard.ENTER) || this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			this.buttonOnClick();
 		}
-}
+	}
 
 	/**
 	 * Callback for button.
