@@ -13,8 +13,74 @@
          "width":785,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "name":"Objects",
+         "objects":[
+                {
+                 "gid":2722,
+                 "height":32,
+                 "id":1,
+                 "name":"",
+                 "properties":
+                    {
+                     "sprite":"simpleEnemy"
+                    },
+                 "propertytypes":
+                    {
+                     "sprite":"string"
+                    },
+                 "rotation":0,
+                 "type":"SimpleEnemySine",
+                 "visible":true,
+                 "width":32,
+                 "x":1457.5,
+                 "y":240.666333333333
+                }, 
+                {
+                 "gid":2723,
+                 "height":32,
+                 "id":8,
+                 "name":"",
+                 "rotation":0,
+                 "type":"SimpleEnemyStraight",
+                 "visible":true,
+                 "width":32,
+                 "x":960.666666666667,
+                 "y":72
+                }, 
+                {
+                 "gid":2723,
+                 "height":32,
+                 "id":9,
+                 "name":"",
+                 "rotation":0,
+                 "type":"SimpleEnemyStraight",
+                 "visible":true,
+                 "width":32,
+                 "x":985.166666666667,
+                 "y":72
+                }, 
+                {
+                 "gid":2723,
+                 "height":32,
+                 "id":10,
+                 "name":"",
+                 "rotation":0,
+                 "type":"SimpleEnemyStraight",
+                 "visible":true,
+                 "width":32,
+                 "x":1010.16666666667,
+                 "y":72
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":1,
+ "nextobjectid":11,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.1.5",
@@ -32,6 +98,19 @@
          "tilecount":2720,
          "tileheight":8,
          "tilewidth":8
+        }, 
+        {
+         "columns":1,
+         "firstgid":2721,
+         "image":"objects.png",
+         "imageheight":96,
+         "imagewidth":32,
+         "margin":0,
+         "name":"objects",
+         "spacing":0,
+         "tilecount":3,
+         "tileheight":32,
+         "tilewidth":32
         }],
  "tilewidth":8,
  "type":"map",

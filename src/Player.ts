@@ -1,5 +1,5 @@
 import GameScene from "./GameScene";
-import TimesteppedScene from "./base/TimesteppedScene";
+import IEnemy from "./IEnemy";
 
 export default class Player extends Phaser.Sprite {
 	private static readonly TargetSpeed = 300;
@@ -19,9 +19,12 @@ export default class Player extends Phaser.Sprite {
 		this.scale.set(2);
 		// Position via the middle
 		this.anchor.setTo(0.5, 0.5);
+		// This time it's not added directly (this.game.add.xxxx) so we need to add it to the scene hierarchy
+		scene.game.add.existing(this);
+		this.game.physics.arcade.enableBody(this);
 	}
 
-	fixedUpdate(dt: number) {
+	public fixedUpdate(dt: number) {
 		let targetVX = 0, targetVY = 0;
 
 		// Move the ship with input
@@ -54,6 +57,11 @@ export default class Player extends Phaser.Sprite {
 			this.x = this.game.camera.x + this.game.width;
 		}
 		this.y = Math.max(0, Math.min(this.game.height, this.y));
+	}
+
+	public hasBeenHitByEnemy(enemy: IEnemy) {
+		console.log('Player has been hit by ', enemy);
+		this.game.state.start('TitleScene');
 	}
 }
 
