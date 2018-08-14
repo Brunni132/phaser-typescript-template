@@ -20,5 +20,10 @@ module.exports = {
 		publicPath: '/build/',
 		filename: 'game.bundle.js'
 	},
-	mode: 'development'
+	mode: 'development',
+	devServer: {
+		contentBase: [path.join(__dirname, 'build'), path.join(__dirname)],
+		compress: true,
+		port: 8080
+	}
 };
