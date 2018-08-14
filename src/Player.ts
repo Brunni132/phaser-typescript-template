@@ -13,13 +13,19 @@ export default class Player extends Phaser.Sprite {
 	private static readonly TargetSpeed = 300;
 	private static readonly AccelerationMultiplier = 0.2;
 	private static readonly BulletRepeatDelayMs = 200;
-	private static readonly ShotBulletSpeed = 500;
+	private static readonly ShotBulletSpeed = 700;
+	private static readonly InvincibleTimeAfterHit = 1;
 	private vx: number;
 	private vy: number;
 	private currentState: AnimationState;
 	private lastShotAt: number;
 	// Keep in order to communicate with root
 	private scene: GameScene;
+	public score: number;
+	// Between 0 and 1, the portion of life
+	public life: number;
+	// When set to a non-zero value, the sprite will be blinking for the given number of ms
+	private blinkingTimeSec: number;
 
 	constructor(scene: GameScene, x: number, y: number) {
 		// Matches the 'player' image loaded in GameScene
@@ -27,6 +33,10 @@ export default class Player extends Phaser.Sprite {
 
 		// Start still
 		this.vx = this.vy = 0;
+		// Start with full life
+		this.life = 1;
+		this.score = 0;
+		this.blinkingTimeSec = 0;
 
 		// No bilinear filtering
 		this.smoothed = false;
@@ -99,21 +109,45 @@ export default class Player extends Phaser.Sprite {
 			this.x = this.game.camera.x + this.game.width;
 		}
 		this.y = Math.max(0, Math.min(this.game.height, this.y));
+
+		// Blinking animation
+		if (this.blinkingTimeSec > 0) {
+			this.visible = !this.visible;
+
+			this.blinkingTimeSec -= dt;
+
+			// Ensure that we leave the state being visible
+			if (this.blinkingTimeSec < 0) {
+				this.visible = true;
+			}
+		}
 	}
 
 	public hasBeenHitByEnemy(enemy: IEnemy) {
-		// Cannot be hit multiple times
-		if (this.currentState === AnimationState.destroyed) {
+		// Already being destroyed, or being hit (blinking) makes you invincible for a while
+		if (this.currentState === AnimationState.destroyed || this.blinkingTimeSec > 0) {
 			return;
 		}
-		this.currentState = AnimationState.destroyed;
 
-		// Play a destroy animation and kill ourselves
-		this.animations.play(AnimationState.destroyed);
-		this.animations.currentAnim.onComplete.add(() => {
-			this.game.state.start('GameOverScene');
-		});
-		this.body.velocity.x = this.body.velocity.y = 0;
+		// Being hit reduces the life. If it goes below zero, we destroy the character
+		this.life -= enemy.lifeDamage;
+		this.scene.updateUI();
+
+		if (this.life <= 0) {
+			// No more life, the player is destroyed for good
+			this.currentState = AnimationState.destroyed;
+
+			// Play a destroy animation and kill ourselves
+			this.animations.play(AnimationState.destroyed);
+			this.animations.currentAnim.onComplete.add(() => {
+				this.game.state.start('GameOverScene', true, false, this.score);
+			});
+			this.body.velocity.x = this.body.velocity.y = 0;
+
+		} else {
+			// Just hit. Make ourselves invincible (blinking) for a while.
+			this.blinkingTimeSec = Player.InvincibleTimeAfterHit;
+		}
 	}
 
 	setState(state: AnimationState) {

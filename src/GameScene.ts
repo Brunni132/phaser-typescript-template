@@ -10,6 +10,9 @@ export default class GameScene extends TimesteppedScene {
 	public static scrollSpeed = 90;
 	private bg1: Phaser.TileSprite;
 	private bg2: Phaser.TileSprite;
+	private scoreValueLabel: Phaser.BitmapText;
+	private lifeValueRectInner: Phaser.Sprite;
+	private lifeValueRectOuter: Phaser.Sprite;
 	private player: Player;
 	private enemies: IEnemy[];
 	// We need to keep track of that to enable collisions to be handled at the root
@@ -23,6 +26,9 @@ export default class GameScene extends TimesteppedScene {
 		this.game.load.image('simpleEnemyStraight', 'assets/simpleEnemyStraight.png');
 		this.game.load.image('simpleEnemySine', 'assets/simpleEnemySine.png');
 		this.game.load.image('bullet', 'assets/bullet.png');
+		this.game.load.bitmapFont('uifont', 'assets/uifont.png', 'assets/uifont.fnt');
+		this.game.load.image('lifeUiBackground', 'assets/lifeUiBackground.png');
+		this.game.load.image('lifeUiForeground', 'assets/lifeUiForeground.png');
 	}
 
 	create() {
@@ -66,6 +72,29 @@ export default class GameScene extends TimesteppedScene {
 
 		// The player (start at the center of the screen)
 		this.player = new Player(this, this.game.width / 2, this.game.height / 2);
+
+		// Score UI
+		const scoreLabel = this.game.add.bitmapText(0, 0, 'uifont', 'SCORE', 24);
+		scoreLabel.fixedToCamera = true;
+
+		this.scoreValueLabel = this.game.add.bitmapText(300, 0, 'uifont', '0', 24);
+		// Align to the right
+		this.scoreValueLabel.anchor.set(1, 0);
+		this.scoreValueLabel.fixedToCamera = true;
+
+		// Life UI
+		const lifeLabel = this.game.add.bitmapText(0, 24, 'uifont', 'LIFE', 24);
+		lifeLabel.fixedToCamera = true;
+
+		this.lifeValueRectOuter = this.game.add.sprite(150, 24, 'lifeUiBackground');
+		this.lifeValueRectOuter.fixedToCamera = true;
+
+		this.lifeValueRectInner = this.game.add.sprite(152, 26, 'lifeUiForeground');
+		this.lifeValueRectInner.fixedToCamera = true;
+		this.lifeValueRectInner.smoothed = false;
+
+		// Initial placement of UI
+		this.updateUI();
 	}
 
 	fixedUpdate(dt: number) {
@@ -106,6 +135,12 @@ export default class GameScene extends TimesteppedScene {
 		}
 	}
 
+	// Called by child game elements to tell that the score changed
+	public increaseScore(by: number) {
+		this.player.score += by;
+		this.updateUI();
+	}
+
 	public removePlayerBullet(bullet: Bullet) {
 		// Remove friendly bullet from the list
 		this.playerBullets.splice(this.playerBullets.indexOf(bullet), 1);
@@ -121,5 +156,16 @@ export default class GameScene extends TimesteppedScene {
 	// Shoots a bullet for a player and keeps track of it
 	public spawnPlayerBullet(x: number, y: number, shotBulletSpeed: number) {
 		this.playerBullets.push(new Bullet(this, x, y, shotBulletSpeed));
+	}
+
+	// Updates the UI (score, life)
+	public updateUI() {
+		this.scoreValueLabel.text = this.player.score.toString();
+
+		// Scale container (bar)
+		const maxBarWidth = this.lifeValueRectOuter.width - 4; // borders are 2 pixels each
+		// Do not draw a life bar less than 0 (when the character is dead, he may have a life lower)
+		const life = Math.max(0, this.player.life);
+		this.lifeValueRectInner.scale.set(life * maxBarWidth, 1);
 	}
 }

@@ -7,6 +7,7 @@ export default class SimpleEnemySine extends Phaser.Sprite implements IEnemy {
 	// Keep in order to communicate with root
 	private scene: GameScene;
 	private lifeTime: number;
+	public lifeDamage: number;
 
 	constructor(scene: GameScene, objectProperties: ITiledObject) {
 		// Matches the 'player' image loaded in GameScene
@@ -14,6 +15,7 @@ export default class SimpleEnemySine extends Phaser.Sprite implements IEnemy {
 
 		this.scene = scene;
 		this.lifeTime = 0;
+		this.lifeDamage = 0.5;
 		// No bilinear filtering
 		this.smoothed = false;
 		// Position via the middle
@@ -37,6 +39,8 @@ export default class SimpleEnemySine extends Phaser.Sprite implements IEnemy {
 		this.scene.removeEnemy(this);
 		// And also the bullet
 		this.scene.removePlayerBullet(bullet);
+		// Score up
+		this.scene.increaseScore(150);
 	}
 }
 
