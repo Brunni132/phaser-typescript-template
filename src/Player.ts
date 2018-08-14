@@ -12,9 +12,14 @@ enum AnimationState {
 export default class Player extends Phaser.Sprite {
 	private static readonly TargetSpeed = 300;
 	private static readonly AccelerationMultiplier = 0.2;
+	private static readonly BulletRepeatDelayMs = 200;
+	private static readonly ShotBulletSpeed = 500;
 	private vx: number;
 	private vy: number;
 	private currentState: AnimationState;
+	private lastShotAt: number;
+	// Keep in order to communicate with root
+	private scene: GameScene;
 
 	constructor(scene: GameScene, x: number, y: number) {
 		// Matches the 'player' image loaded in GameScene
@@ -37,6 +42,10 @@ export default class Player extends Phaser.Sprite {
 		this.animations.add(AnimationState.downwards, [2, 3], 10, true);
 		this.animations.add(AnimationState.upwards, [4, 5], 10, true);
 		this.animations.add(AnimationState.destroyed, arrayWithRange(8, 41), 60, false);
+
+		// Other variables
+		this.scene = scene;
+		this.lastShotAt = this.game.time.now;
 	}
 
 	public fixedUpdate(dt: number) {
@@ -58,6 +67,15 @@ export default class Player extends Phaser.Sprite {
 			targetVY = -Player.TargetSpeed
 		} else if (this.game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
 			targetVY = +Player.TargetSpeed
+		}
+
+		// Bullet shooting support
+		if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) &&
+			this.game.time.now - this.lastShotAt >= Player.BulletRepeatDelayMs)
+		{
+			// Shoot from the right part of our ship
+			this.scene.spawnPlayerBullet(this.x + this.width / 2, this.y, Player.ShotBulletSpeed);
+			this.lastShotAt = this.game.time.now;
 		}
 
 		// Apply acceleration to velocity (use the physics engine this time)

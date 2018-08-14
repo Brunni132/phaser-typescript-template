@@ -1,14 +1,18 @@
 import GameScene from "./GameScene";
 import ITiledObject from "./base/ITiledObject";
 import IEnemy from "./IEnemy";
+import Bullet from "./Bullet";
 
 export default class SimpleEnemySine extends Phaser.Sprite implements IEnemy {
+	// Keep in order to communicate with root
+	private scene: GameScene;
 	private lifeTime: number;
 
 	constructor(scene: GameScene, objectProperties: ITiledObject) {
 		// Matches the 'player' image loaded in GameScene
 		super(scene.game, objectProperties.x, objectProperties.y, 'simpleEnemySine', 0);
 
+		this.scene = scene;
 		this.lifeTime = 0;
 		// No bilinear filtering
 		this.smoothed = false;
@@ -26,6 +30,13 @@ export default class SimpleEnemySine extends Phaser.Sprite implements IEnemy {
 		const vy = Math.sin(this.lifeTime * 5) * 100;
 		this.x += vx * dt;
 		this.y += vy * dt;
+	}
+
+	public hasBeenHitByBullet(bullet: Bullet) {
+		// And notify the scene so that we remove it from the list
+		this.scene.removeEnemy(this);
+		// And also the bullet
+		this.scene.removePlayerBullet(bullet);
 	}
 }
 

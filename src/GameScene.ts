@@ -1,4 +1,5 @@
 import TimesteppedScene from "./base/TimesteppedScene";
+import Bullet from './Bullet';
 import Player from './Player';
 import SimpleEnemyStraight from './SimpleEnemyStraight';
 import SimpleEnemySine from './SimpleEnemySine';
@@ -11,6 +12,8 @@ export default class GameScene extends TimesteppedScene {
 	private bg2: Phaser.TileSprite;
 	private player: Player;
 	private enemies: IEnemy[];
+	// We need to keep track of that to enable collisions to be handled at the root
+	private playerBullets: Bullet[];
 
 	preload() {
 		this.game.load.image('bg', 'assets/bg.png');
@@ -19,11 +22,13 @@ export default class GameScene extends TimesteppedScene {
 		this.load.spritesheet('player', 'assets/player.png', 24, 24);
 		this.game.load.image('simpleEnemyStraight', 'assets/simpleEnemyStraight.png');
 		this.game.load.image('simpleEnemySine', 'assets/simpleEnemySine.png');
+		this.game.load.image('bullet', 'assets/bullet.png');
 	}
 
 	create() {
 		// Variables
 		this.enemies = [];
+		this.playerBullets = [];
 		this.game.camera.x = 0;
 
 		// Two backgrounds added on top of each other for the starfield
@@ -83,7 +88,38 @@ export default class GameScene extends TimesteppedScene {
 				if (this.game.physics.arcade.overlap(this.player, enemy)) {
 					this.player.hasBeenHitByEnemy(enemy);
 				}
+
+				// Check collisions between player bullets (friendly) and enemies
+				for (const bullet of this.playerBullets) {
+					if (this.game.physics.arcade.overlap(bullet, enemy)) {
+						enemy.hasBeenHitByBullet(bullet);
+					}
+				}
 			}
 		}
+
+		// Destroy bullets outside of the screen
+		for (const bullet of this.playerBullets) {
+			if (bullet.x > this.game.camera.x + this.game.width) {
+				this.removePlayerBullet(bullet);
+			}
+		}
+	}
+
+	public removePlayerBullet(bullet: Bullet) {
+		// Remove friendly bullet from the list
+		this.playerBullets.splice(this.playerBullets.indexOf(bullet), 1);
+		bullet.destroy(true);
+	}
+
+	public removeEnemy(enemy: IEnemy) {
+		// Remove enemy from the list
+		this.enemies.splice(this.enemies.indexOf(enemy), 1);
+		enemy.destroy(true);
+	}
+
+	// Shoots a bullet for a player and keeps track of it
+	public spawnPlayerBullet(x: number, y: number, shotBulletSpeed: number) {
+		this.playerBullets.push(new Bullet(this, x, y, shotBulletSpeed));
 	}
 }
