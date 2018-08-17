@@ -16,7 +16,7 @@ export default class GameScene extends TimesteppedScene {
 		this.game.load.image('bg', 'assets/bg.png');
 		this.game.load.tilemap('bgmap', 'assets/level01.json', null, Phaser.Tilemap.TILED_JSON);
 		this.game.load.image('bg_tiles', 'assets/level01.tmx.png');
-		this.game.load.image('player', 'assets/player.png');
+		this.load.spritesheet('player', 'assets/player.png', 24, 24);
 		this.game.load.image('simpleEnemyStraight', 'assets/simpleEnemyStraight.png');
 		this.game.load.image('simpleEnemySine', 'assets/simpleEnemySine.png');
 	}
